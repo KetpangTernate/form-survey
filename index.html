@@ -37,7 +37,7 @@ cursor:pointer;
 <div class="card">
 <h3>FORM SURVEY HARGA</h3>
 
-<form id="form">
+<form id="form" enctype="multipart/form-data">
 
 <input name="surveyor" placeholder="Nama Surveyor" required>
 
@@ -79,18 +79,15 @@ document.getElementById("form").addEventListener("submit", function(e){
     method:"POST",
     body:data
   })
-  .then(res=>res.text())
-  .then(res=>{
-    alert("Data berhasil dikirim");
+  .then(r=>r.text())
+  .then(r=>{
+    alert(r);
     form.reset();
   })
-  .catch(err=>{
-    alert("Gagal kirim data");
-    console.log(err);
-  });
-
 });
 </script>
 
+
 </body>
 </html>
+
