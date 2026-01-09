@@ -26,7 +26,8 @@ button{
 background:#2196F3;
 color:white;
 border:none;
-font-weight:bold
+font-weight:bold;
+cursor:pointer;
 }
 </style>
 </head>
@@ -62,30 +63,34 @@ font-weight:bold
 <label>Upload Foto</label>
 <input type="file" name="file" accept="image/*" required>
 
-<button>KIRIM DATA</button>
+<button type="submit">KIRIM DATA</button>
 
 </form>
 </div>
 
 <script>
-document.getElementById("form").onsubmit=async(e)=>{
-e.preventDefault();
+document.getElementById("form").addEventListener("submit", function(e){
+  e.preventDefault();
 
-let form = e.target;
-let data = new FormData(form);
+  let form = e.target;
+  let data = new FormData(form);
 
-await fetch(
-"https://script.google.com/macros/s/AKfycbx6fNSQGLkeW3n76dBhEwMKn2fd73l18-8k0QbYSUsxfz4BIOH6pmP40Hb0dnE_mdLvZA/exec",
-{
-method:"POST",
-body:data
+  fetch("https://script.google.com/macros/s/AKfycbx6fNSQGLkeW3n76dBhEwMKn2fd73l18-8k0QbYSUsxfz4BIOH6pmP40Hb0dnE_mdLvZA/exec",{
+    method:"POST",
+    body:data
+  })
+  .then(res=>res.text())
+  .then(res=>{
+    alert("Data berhasil dikirim");
+    form.reset();
+  })
+  .catch(err=>{
+    alert("Gagal kirim data");
+    console.log(err);
+  });
+
 });
-
-alert("Data & foto berhasil dikirim");
-form.reset();
-}
 </script>
 
 </body>
 </html>
-
