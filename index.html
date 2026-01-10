@@ -77,18 +77,20 @@ filename: file.name
 };
 
 fetch(API,{
-method:"POST",
-body:JSON.stringify(data)
+  method:"POST",
+  mode:"no-cors",
+  headers:{
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify(data)
 })
-.then(r=>r.json())
-.then(r=>{
-status.innerHTML="✅ Data berhasil dikirim";
-form.reset();
+.then(()=>{
+  status.innerHTML="✅ Data berhasil dikirim";
+  form.reset();
 })
 .catch(()=>{
-status.innerHTML="❌ Gagal kirim data";
+  status.innerHTML="❌ Gagal kirim data";
 });
-}
 
 reader.readAsDataURL(file);
 });
@@ -96,3 +98,4 @@ reader.readAsDataURL(file);
 
 </body>
 </html>
+
