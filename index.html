@@ -1,17 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Update Harga Pangan</title>
+
 <style>
-body{font-family:Arial;background:#f4f4f4;padding:20px}
-.box{background:#fff;padding:20px;border-radius:10px;max-width:600px;margin:auto}
-input,select,textarea,button{width:100%;padding:10px;margin-top:8px}
-button{background:#28a745;color:#fff;border:none;font-weight:bold}
+body{
+  font-family:Arial;
+  background:#f2f4f8;
+  padding:15px
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  max-width:480px;
+  margin:auto;
+  box-shadow:0 5px 15px rgba(0,0,0,.1)
+}
+h3{text-align:center;margin-bottom:15px}
+
+label{font-weight:bold;font-size:14px}
+input,select,textarea,button{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  margin-bottom:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:14px
+}
+
+.radio-group{
+  display:flex;
+  justify-content:space-between;
+  margin:8px 0
+}
+.radio-group label{
+  font-weight:normal
+}
+
+button{
+  background:#28a745;
+  color:#fff;
+  border:none;
+  font-size:16px;
+  font-weight:bold
+}
+
+#status{
+  text-align:center;
+  margin-top:10px;
+  font-weight:bold
+}
 </style>
 </head>
 <body>
 
-<div class="box">
+<div class="card">
 <h3>Update Harga Sistem Informasi Pangan</h3>
 
 <form id="form">
@@ -21,20 +68,45 @@ button{background:#28a745;color:#fff;border:none;font-weight:bold}
 
 <label>PILIH KOMODITAS</label>
 <select name="komoditas" required>
-<option value="">-- Pilih --</option>
-<option>Bawang Merah ( Kg )</option>
+<option value="">-- Pilih Komoditas --</option>
+<option>Bawang Merah</option>
+<option>Bawang Putih</option>
+<option>Bayam Hijau</option>
+<option>Bayam Merah</option>
+<option>Beras Medium</option>
+<option>Beras Premium</option>
+<option>Cabe Merah</option>
+<option>Cabe Rawit</option>
+<option>Daging Ayam</option>
+<option>Daging Sapi</option>
+<option>Garam Halus</option>
+<option>Gula Pasir</option>
+<option>Ikan Cakalang</option>
+<option>Ikan Fufu</option>
+<option>Ikan Garam</option>
+<option>Ikan Kembung</option>
+<option>Ikan Teri</option>
+<option>Ikan Tuna</option>
+<option>Kangkung</option>
+<option>Kembang Kol</option>
+<option>Kentang</option>
+<option>Minyak Goreng Curah</option>
 <option>Minyak Goreng Kemasan</option>
-<option>Beras</option>
-<option>Telur</option>
-<option>Ayam</option>
+<option>Telur Ayam</option>
+<option>Tepung Terigu</option>
+<option>Terigu Kemasan</option>
+<option>Tomat</option>
+<option>Wortel</option>
 </select>
 
-<label>KUALITAS</label><br>
-<input type="radio" name="kualitas" value="Premium" required> Premium<br>
-<input type="radio" name="kualitas" value="Medium"> Medium<br>
-<input type="radio" name="kualitas" value="Rendah"> Rendah<br>
+<label>KUALITAS</label>
+<div class="radio-group">
+<label><input type="radio" name="kualitas" value="Premium" required> Premium</label>
+<label><input type="radio" name="kualitas" value="Medium"> Medium</label>
+<label><input type="radio" name="kualitas" value="Rendah"> Rendah</label>
+</div>
 
-<label>HARGA (Rupiah)</label>
+<label>HARGA (Rp)</label>
 <input type="number" name="harga" required>
 
 <label>CATATAN</label>
@@ -43,7 +115,7 @@ button{background:#28a745;color:#fff;border:none;font-weight:bold}
 <label>DOKUMENTASI</label>
 <input type="file" name="foto" accept="image/*" required>
 
-<button type="submit">KIRIM</button>
+<button type="submit">KIRIM DATA</button>
 </form>
 
 <p id="status"></p>
@@ -57,37 +129,36 @@ const API = "https://script.google.com/macros/s/AKfycbwWFZWiu4VGX5oiXf3QWr1Jt0CB
 const form = document.getElementById("form");
 const status = document.getElementById("status");
 
-form.addEventListener("submit", function(e){
+form.addEventListener("submit",function(e){
 e.preventDefault();
 status.innerHTML="⏳ Mengirim data...";
 
-const file = form.foto.files[0];
-const reader = new FileReader();
+const file=form.foto.files[0];
+const reader=new FileReader();
 
-reader.onload = function(){
+reader.onload=function(){
 
-const payload = {
-surveyor: form.surveyor.value,
-komoditas: form.komoditas.value,
-kualitas: document.querySelector('input[name="kualitas"]:checked').value,
-harga: form.harga.value,
-catatan: form.catatan.value,
-file: reader.result.split(",")[1],
-filename: file.name
+const payload={
+surveyor:form.surveyor.value,
+komoditas:form.komoditas.value,
+kualitas:document.querySelector('input[name="kualitas"]:checked').value,
+harga:form.harga.value,
+catatan:form.catatan.value,
+file:reader.result.split(",")[1],
+filename:file.name
 };
 
-// buat form sementara
-const f = document.createElement("form");
+const f=document.createElement("form");
 f.method="POST";
 f.action=API;
 f.target="hidden_iframe";
 
-const input = document.createElement("input");
-input.type="hidden";
-input.name="data";
-input.value=JSON.stringify(payload);
+const i=document.createElement("input");
+i.type="hidden";
+i.name="data";
+i.value=JSON.stringify(payload);
 
-f.appendChild(input);
+f.appendChild(i);
 document.body.appendChild(f);
 f.submit();
 f.remove();
