@@ -6,7 +6,7 @@
 body{font-family:Arial;background:#f4f4f4;padding:20px}
 .box{background:#fff;padding:20px;border-radius:10px;max-width:600px;margin:auto}
 input,select,textarea,button{width:100%;padding:10px;margin-top:8px}
-button{background:#28a745;color:#fff;border:none}
+button{background:#28a745;color:#fff;border:none;font-weight:bold}
 </style>
 </head>
 <body>
@@ -29,7 +29,7 @@ button{background:#28a745;color:#fff;border:none}
 <option>Ayam</option>
 </select>
 
-<label>KUALITAS</label>
+<label>KUALITAS</label><br>
 <input type="radio" name="kualitas" value="Premium" required> Premium<br>
 <input type="radio" name="kualitas" value="Medium"> Medium<br>
 <input type="radio" name="kualitas" value="Rendah"> Rendah<br>
@@ -49,48 +49,52 @@ button{background:#28a745;color:#fff;border:none}
 <p id="status"></p>
 </div>
 
+<iframe name="hidden_iframe" style="display:none;"></iframe>
+
 <script>
 const API = "https://script.google.com/macros/s/AKfycbwWFZWiu4VGX5oiXf3QWr1Jt0CBMc9MJeHUCgUs4PdiQ4e8zVQBhi1GtL_rS6pYBQUeEA/exec";
-  
 
 const form = document.getElementById("form");
 const status = document.getElementById("status");
 
-form.addEventListener("submit", e=>{
+form.addEventListener("submit", function(e){
 e.preventDefault();
-
 status.innerHTML="⏳ Mengirim data...";
 
 const file = form.foto.files[0];
 const reader = new FileReader();
 
-reader.onload = ()=>{
-const base64 = reader.result.split(",")[1];
+reader.onload = function(){
 
-const data = {
+const payload = {
 surveyor: form.surveyor.value,
 komoditas: form.komoditas.value,
 kualitas: document.querySelector('input[name="kualitas"]:checked').value,
 harga: form.harga.value,
 catatan: form.catatan.value,
-file: base64,
+file: reader.result.split(",")[1],
 filename: file.name
 };
 
-fetch(API,{
-  method:"POST",
-  mode:"no-cors",
-  body:JSON.stringify(data)
-})
-.then(()=>{
-  status.innerHTML="✅ Data berhasil dikirim";
-  form.reset();
-})
-.catch(()=>{
-  status.innerHTML="❌ Gagal kirim";
-});
+// buat form sementara
+const f = document.createElement("form");
+f.method="POST";
+f.action=API;
+f.target="hidden_iframe";
 
+const input = document.createElement("input");
+input.type="hidden";
+input.name="data";
+input.value=JSON.stringify(payload);
 
+f.appendChild(input);
+document.body.appendChild(f);
+f.submit();
+f.remove();
+
+status.innerHTML="✅ Data berhasil dikirim";
+form.reset();
+}
 
 reader.readAsDataURL(file);
 });
@@ -98,7 +102,3 @@ reader.readAsDataURL(file);
 
 </body>
 </html>
-
-
-
-
