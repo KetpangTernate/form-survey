@@ -73,8 +73,8 @@ document.getElementById("form").onsubmit=async(e)=>{
  let f=e.target;
  let file=document.getElementById("foto").files[0];
 
- if(file.size>2000000){
-   alert("Ukuran max 2MB");return;
+ if(file.size>4000000){
+   alert("Ukuran max 4MB");return;
  }
 
  let b64=await toBase64(file);
@@ -108,3 +108,4 @@ function toBase64(file){
 </script>
 </body>
 </html>
+
