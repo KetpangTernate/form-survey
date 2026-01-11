@@ -3,47 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>Update Harga Pasar</title>
-
 <style>
-body{
- background:#f1f5f9;
- font-family:Arial
-}
+body{background:#f1f5f9;font-family:Arial}
 .card{
- max-width:500px;
- margin:40px auto;
- background:white;
- padding:20px;
+ max-width:500px;margin:40px auto;
+ background:white;padding:20px;
  border-radius:12px;
  box-shadow:0 0 10px rgba(0,0,0,.1)
 }
-h2{
- text-align:center;
- color:#1d4ed8
-}
+h2{text-align:center;color:#1d4ed8}
 input,select,textarea,button{
- width:100%;
- padding:10px;
- margin-top:10px;
- border:1px solid #ccc;
- border-radius:6px;
- font-size:15px
+ width:100%;padding:10px;margin-top:10px;
+ border:1px solid #ccc;border-radius:6px
 }
-button{
- background:#1d4ed8;
- color:white;
- border:none;
- cursor:pointer
-}
+button{background:#1d4ed8;color:white;border:none}
 </style>
-
 </head>
-<body>
 
+<body>
 <div class="card">
 <h2>UPDATE HARGA PASAR</h2>
 
-<form id="form">
+<form 
+action="https://script.google.com/macros/s/AKfycbyHjIYO63uJE2lYRozX6h927zjDCQm83bqUbWxEfHoO_398GoeOhcEI_wZfzCciwTsusA/exec"
+method="POST"
+target="hidden_iframe"
+enctype="multipart/form-data">
 
 <input name="surveyor" placeholder="Nama Surveyor" required>
 
@@ -71,64 +56,14 @@ button{
 
 <textarea name="catatan" placeholder="Catatan"></textarea>
 
-<input type="file" id="foto" accept="image/*" required>
+<input type="file" name="foto" required>
 
 <button type="submit">Kirim</button>
-
 </form>
+
+<iframe name="hidden_iframe" style="display:none"
+onload="alert('Berhasil dikirim')"></iframe>
+
 </div>
-
-<script>
-
-const API = "https://script.google.com/macros/s/AKfycbyHjIYO63uJE2lYRozX6h927zjDCQm83bqUbWxEfHoO_398GoeOhcEI_wZfzCciwTsusA/exec";
-
-document.getElementById("form").addEventListener("submit", async function(e){
- e.preventDefault();
-
- let f = e.target;
- let file = document.getElementById("foto").files[0];
-
- if(!file){
-   alert("Foto wajib diupload");
-   return;
- }
-
- let base64 = await toBase64(file);
-
- let data = {
-  surveyor:f.surveyor.value,
-  komoditas:f.komoditas.value,
-  satuan:f.satuan.value,
-  kualitas:f.kualitas.value,
-  harga:f.harga.value,
-  catatan:f.catatan.value,
-  dokumentasi:base64
- };
-
- fetch(API,{
-  method:"POST",
-  body:JSON.stringify(data)
- })
- .then(r=>r.json())
- .then(res=>{
-   alert("Berhasil dikirim");
-   f.reset();
- })
- .catch(()=>{
-   alert("Gagal kirim");
- });
-
-});
-
-function toBase64(file){
- return new Promise(res=>{
-  let reader = new FileReader();
-  reader.onload = ()=>res(reader.result);
-  reader.readAsDataURL(file);
- });
-}
-
-</script>
-
 </body>
 </html>
