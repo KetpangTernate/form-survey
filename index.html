@@ -4,20 +4,34 @@
 <meta charset="UTF-8">
 <title>Update Harga Pasar</title>
 <style>
-body{font-family:Arial;background:#f2f2f2;padding:20px}
-form{background:white;padding:20px;border-radius:10px;max-width:500px;margin:auto}
-input,select,textarea,button{
- width:100%;padding:10px;margin-top:8px
+body{font-family:Segoe UI;background:#eef2f7}
+.card{
+ max-width:500px;margin:30px auto;
+ background:white;padding:20px;
+ border-radius:12px;
+ box-shadow:0 0 10px rgba(0,0,0,.1)
 }
-button{background:#4CAF50;color:white;border:none}
+h2{text-align:center;color:#1a73e8}
+input,select,textarea{
+ width:100%;padding:10px;
+ border:1px solid #ccc;
+ border-radius:6px;margin-top:6px
+}
+button{
+ width:100%;padding:12px;
+ background:#1a73e8;color:white;
+ border:none;border-radius:6px;
+ margin-top:12px;font-size:16px
+}
+small{color:red}
 </style>
 </head>
 
 <body>
+<div class="card">
+<h2>UPDATE HARGA PASAR</h2>
 
 <form id="form">
-<h3>UPDATE HARGA PASAR</h3>
-
 <input name="surveyor" placeholder="Nama Surveyor" required>
 
 <select name="komoditas" required>
@@ -28,65 +42,69 @@ button{background:#4CAF50;color:white;border:none}
 <option>Ayam</option>
 </select>
 
-<select name="satuan">
+<select name="satuan" required>
 <option>Kg</option>
 <option>Ikat</option>
 <option>Ekor</option>
 </select>
 
-<select name="kualitas">
+<select name="kualitas" required>
 <option>Premium</option>
 <option>Medium</option>
 <option>Rendah</option>
 </select>
 
-<input name="harga" placeholder="Harga">
+<input name="harga" type="number" placeholder="Harga" required>
 
 <textarea name="catatan" placeholder="Catatan"></textarea>
 
-<input type="file" id="foto" accept="image/*">
+<input type="file" id="foto" accept="image/*" required>
 
 <button>Kirim</button>
 </form>
+</div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyHjIYO63uJE2lYRozX6h927zjDCQm83bqUbWxEfHoO_398GoeOhcEI_wZfzCciwTsusA/exec";
+const API="https://script.google.com/macros/s/AKfycbyHjIYO63uJE2lYRozX6h927zjDCQm83bqUbWxEfHoO_398GoeOhcEI_wZfzCciwTsusA/exec";
 
-document.getElementById("form").onsubmit = async(e)=>{
+document.getElementById("form").onsubmit=async(e)=>{
  e.preventDefault();
 
- let f = e.target;
- let file = document.getElementById("foto").files[0];
+ let f=e.target;
+ let file=document.getElementById("foto").files[0];
 
- let base64="";
- if(file){
-   base64 = await toBase64(file);
+ if(file.size>2000000){
+   alert("Ukuran max 2MB");return;
  }
 
- let data = {
+ let b64=await toBase64(file);
+
+ let data={
   surveyor:f.surveyor.value,
   komoditas:f.komoditas.value,
   satuan:f.satuan.value,
   kualitas:f.kualitas.value,
   harga:f.harga.value,
   catatan:f.catatan.value,
-  dokumentasi:base64
+  dokumentasi:b64
  }
 
  fetch(API,{
   method:"POST",
   body:JSON.stringify(data)
- }).then(()=>alert("Data terkirim!"))
+ }).then(()=>{
+  alert("Berhasil dikirim");
+  f.reset();
+ })
 }
 
 function toBase64(file){
- return new Promise((res)=>{
+ return new Promise(res=>{
   let r=new FileReader();
   r.onload=()=>res(r.result);
   r.readAsDataURL(file);
  })
 }
 </script>
-
 </body>
 </html>
