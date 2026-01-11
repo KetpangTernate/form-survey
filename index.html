@@ -3,35 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <title>Update Harga Pasar</title>
+
 <style>
-body{font-family:Segoe UI;background:#eef2f7}
+body{
+ background:#f1f5f9;
+ font-family:Arial
+}
 .card{
- max-width:500px;margin:30px auto;
- background:white;padding:20px;
+ max-width:500px;
+ margin:40px auto;
+ background:white;
+ padding:20px;
  border-radius:12px;
  box-shadow:0 0 10px rgba(0,0,0,.1)
 }
-h2{text-align:center;color:#1a73e8}
-input,select,textarea{
- width:100%;padding:10px;
+h2{
+ text-align:center;
+ color:#1d4ed8
+}
+input,select,textarea,button{
+ width:100%;
+ padding:10px;
+ margin-top:10px;
  border:1px solid #ccc;
- border-radius:6px;margin-top:6px
+ border-radius:6px;
+ font-size:15px
 }
 button{
- width:100%;padding:12px;
- background:#1a73e8;color:white;
- border:none;border-radius:6px;
- margin-top:12px;font-size:16px
+ background:#1d4ed8;
+ color:white;
+ border:none;
+ cursor:pointer
 }
-small{color:red}
 </style>
-</head>
 
+</head>
 <body>
+
 <div class="card">
 <h2>UPDATE HARGA PASAR</h2>
 
 <form id="form">
+
 <input name="surveyor" placeholder="Nama Surveyor" required>
 
 <select name="komoditas" required>
@@ -60,52 +73,62 @@ small{color:red}
 
 <input type="file" id="foto" accept="image/*" required>
 
-<button>Kirim</button>
+<button type="submit">Kirim</button>
+
 </form>
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbyHjIYO63uJE2lYRozX6h927zjDCQm83bqUbWxEfHoO_398GoeOhcEI_wZfzCciwTsusA/exec";
 
-document.getElementById("form").onsubmit=async(e)=>{
+const API = "https://script.google.com/macros/s/AKfycbyHjIYO63uJE2lYRozX6h927zjDCQm83bqUbWxEfHoO_398GoeOhcEI_wZfzCciwTsusA/exec";
+
+document.getElementById("form").addEventListener("submit", async function(e){
  e.preventDefault();
 
- let f=e.target;
- let file=document.getElementById("foto").files[0];
+ let f = e.target;
+ let file = document.getElementById("foto").files[0];
 
- if(file.size>4000000){
-   alert("Ukuran max 4MB");return;
+ if(!file){
+   alert("Foto wajib diupload");
+   return;
  }
 
- let b64=await toBase64(file);
+ let base64 = await toBase64(file);
 
- let data={
+ let data = {
   surveyor:f.surveyor.value,
   komoditas:f.komoditas.value,
   satuan:f.satuan.value,
   kualitas:f.kualitas.value,
   harga:f.harga.value,
   catatan:f.catatan.value,
-  dokumentasi:b64
- }
+  dokumentasi:base64
+ };
 
  fetch(API,{
   method:"POST",
   body:JSON.stringify(data)
- }).then(()=>{
-  alert("Berhasil dikirim");
-  f.reset();
  })
-}
+ .then(r=>r.json())
+ .then(res=>{
+   alert("Berhasil dikirim");
+   f.reset();
+ })
+ .catch(()=>{
+   alert("Gagal kirim");
+ });
+
+});
 
 function toBase64(file){
  return new Promise(res=>{
-  let r=new FileReader();
-  r.onload=()=>res(r.result);
-  r.readAsDataURL(file);
- })
+  let reader = new FileReader();
+  reader.onload = ()=>res(reader.result);
+  reader.readAsDataURL(file);
+ });
 }
+
 </script>
+
 </body>
 </html>
-
