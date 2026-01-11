@@ -63,13 +63,8 @@ document.getElementById("form").onsubmit = async(e)=>{
    return;
  }
 
- // batasi ukuran
- if(file.size > 2000000){
-   alert("Ukuran foto max 2MB");
-   return;
- }
-
- let base64 = await toBase64(file);
+ // compress dulu
+ let base64 = await compressImage(file, 1200, 0.7);
 
  let data = {
   surveyor:f.surveyor.value,
@@ -83,15 +78,12 @@ document.getElementById("form").onsubmit = async(e)=>{
 
  fetch(API,{
   method:"POST",
-  headers:{
-    "Content-Type":"application/json"
-  },
+  headers:{"Content-Type":"application/json"},
   body:JSON.stringify(data)
  })
  .then(r=>r.text())
  .then(t=>{
    alert("Berhasil dikirim");
-   console.log(t);
    f.reset();
  })
  .catch(err=>{
@@ -100,16 +92,35 @@ document.getElementById("form").onsubmit = async(e)=>{
  });
 }
 
-function toBase64(file){
- return new Promise((res)=>{
-  let r = new FileReader();
-  r.onload = ()=>res(r.result);
-  r.readAsDataURL(file);
+// ===== COMPRESS =====
+function compressImage(file, maxWidth, quality){
+ return new Promise(resolve=>{
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const img = new Image();
+    img.onload = ()=>{
+      let canvas = document.createElement("canvas");
+      let ratio = img.width / img.height;
+
+      canvas.width = maxWidth;
+      canvas.height = maxWidth / ratio;
+
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+      let base64 = canvas.toDataURL("image/jpeg", quality);
+      resolve(base64);
+    }
+    img.src = e.target.result;
+  }
+  reader.readAsDataURL(file);
  })
 }
 </script>
 
 
+
 </body>
 </html>
+
 
