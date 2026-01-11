@@ -58,10 +58,18 @@ document.getElementById("form").onsubmit = async(e)=>{
  let f = e.target;
  let file = document.getElementById("foto").files[0];
 
- let base64="";
- if(file){
-   base64 = await toBase64(file);
+ if(!file){
+   alert("Foto wajib diupload!");
+   return;
  }
+
+ // batasi ukuran
+ if(file.size > 2000000){
+   alert("Ukuran foto max 2MB");
+   return;
+ }
+
+ let base64 = await toBase64(file);
 
  let data = {
   surveyor:f.surveyor.value,
@@ -71,22 +79,37 @@ document.getElementById("form").onsubmit = async(e)=>{
   harga:f.harga.value,
   catatan:f.catatan.value,
   dokumentasi:base64
- }
+ };
 
  fetch(API,{
   method:"POST",
+  headers:{
+    "Content-Type":"application/json"
+  },
   body:JSON.stringify(data)
- }).then(()=>alert("Data terkirim!"))
+ })
+ .then(r=>r.text())
+ .then(t=>{
+   alert("Berhasil dikirim");
+   console.log(t);
+   f.reset();
+ })
+ .catch(err=>{
+   alert("Gagal kirim");
+   console.log(err);
+ });
 }
 
 function toBase64(file){
  return new Promise((res)=>{
-  let r=new FileReader();
-  r.onload=()=>res(r.result);
+  let r = new FileReader();
+  r.onload = ()=>res(r.result);
   r.readAsDataURL(file);
  })
 }
 </script>
 
+
 </body>
 </html>
+
